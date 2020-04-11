@@ -64,31 +64,6 @@ when CLIENT_ACCEPTED {
     set calledsid "Missing"
   }
   ### Init - End ###
-  # Custom L4 blocking - Start
-  foreach acce [class get _dpi-action-on-accepted] {
-    set c [split [lindex $acce 0] \;]
-    switch [lindex $c 1] {
-      dst_port {
-        set opr "[TCP::local_port]"
-      }
-      dst_ip {
-        set opr "[IP::local_addr]"
-      }
-      src_ip {
-        set opr "[IP::client_addr]"
-      }
-      default {
-        set opr ""
-      }
-    }
-    if { $opr ne "" } {
-      set cmd "if { $opr [lindex $c 2] \"[lindex $c 3]\" } { set action [lindex $acce 1] }"
-      catch { eval $cmd }
-    }
-  }
-  unset -nocomplain acce opr
-  # Custom L4 blocking - End
-
 
   ### Server PTR Name - Start ###
   set srv_ptr_name [ table lookup "ptr-[IP::local_addr]" ]

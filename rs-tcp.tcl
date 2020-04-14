@@ -83,7 +83,8 @@ when CLIENT_ACCEPTED {
     # Custom classification on PTR - Start
     foreach ptre [class get _dpi-classify-on-ptr ] {
       set c [ split [lindex $ptre 0] \; ]
-      set cmd "if { \$srv_ptr_name [lindex $c 1] \"[lindex $c 2]\" } { CLASSIFY::application set [lindex $ptre 1] }"
+      set a [ lindex $ptre 1 ]
+      set cmd "if { \$srv_ptr_name [lindex $c 1] \"[lindex $c 2]\" } { CLASSIFY::application set $a }"
       catch { eval $cmd }
     }
     # Custom classification on PTR - End
@@ -91,10 +92,11 @@ when CLIENT_ACCEPTED {
     # Custom action on PTR - Start
     foreach ptracte [class get _dpi-action-on-ptr ] {
       set c [ split [lindex $ptracte 0] \; ]
-      set cmd "if { \$srv_ptr_name [lindex $c 1] \"[lindex $c 2]\" } { set action [lindex $ptracte 1] }"
+      set a [ lindex $ptracte 1 ]
+      set cmd "if { \$srv_ptr_name [lindex $c 1] \"[lindex $c 2]\" } { set action $a }"
       catch { eval $cmd }
     }
-    unset -nocomplain c cmd ptracte ptraction
+    unset -nocomplain a c cmd ptracte ptraction
     # Custom action on PTR - End
   }
 
@@ -217,17 +219,19 @@ when CLIENT_DATA {
         # Custom classification on SNI - Start
         foreach e [class get _dpi-classify-on-sni ] {
           set c [ split [lindex $e 0] \; ]
-          set cmd "if { \$sni [lindex $c 1] \"[lindex $c 2]\" } { CLASSIFY::application set [lindex $e 1] }"
+          set a [ lindex $e 1 ]
+          set cmd "if { \$sni [lindex $c 1] \"[lindex $c 2]\" } { CLASSIFY::application set $a }"
           catch { eval $cmd }
         }
         # Custom classification on SNI - End
         # Custom action on SNI - Start
         foreach e [class get _dpi-action-on-sni ] {
-          set c [ split [lindex $e 0] \; ]
-          set cmd "if { \$sni [lindex $c 1] \"[lindex $c 2]\" } { set action [lindex $e 1] }"
+          set c [ split [ lindex $e 0 ] \; ]
+          set a [ lindex $e 1 ]
+          set cmd "if { \$sni [lindex $c 1] \"[lindex $c 2]\" } { set action $a }"
           catch { eval $cmd }
         }
-        unset -nocomplain c cmd e
+        unset -nocomplain a c cmd e
         if { $action eq "Block" } {
           drop
           return

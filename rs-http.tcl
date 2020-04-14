@@ -82,7 +82,8 @@ when CLIENT_ACCEPTED {
     # Custom classification on PTR - Start
     foreach ptre [class get _dpi-classify-on-ptr ] {
       set c [ split [lindex $ptre 0] \; ]
-      set cmd "if { \$srv_ptr_name [lindex $c 1] \"[lindex $c 2]\" } { CLASSIFY::application set [lindex $ptre 1] }"
+      set a [ lindex $ptre 1 ]
+      set cmd "if { \$srv_ptr_name [lindex $c 1] \"[lindex $c 2]\" } { CLASSIFY::application set $a }"
       catch { eval $cmd }
     }
     # Custom classification on PTR - End
@@ -90,10 +91,11 @@ when CLIENT_ACCEPTED {
     # Custom action on PTR - Start
     foreach ptracte [class get _dpi-action-on-ptr ] {
       set c [ split [lindex $ptracte 0] \; ]
-      set cmd "if { \$srv_ptr_name [lindex $c 1] \"[lindex $c 2]\" } { set action [lindex $ptracte 1] }"
+      set a [ lindex $ptracte 1 ]
+      set cmd "if { \$srv_ptr_name [lindex $c 1] \"[lindex $c 2]\" } { set action $a }"
       catch { eval $cmd }
     }
-    unset -nocomplain c cmd ptracte ptraction
+    unset -nocomplain a c cmd ptracte ptraction
     # Custom action on PTR - End
   }
 
@@ -140,7 +142,8 @@ when HTTP_REQUEST {
     # Custom action on HTTP-Host - Start
     foreach ptracte [class get _dpi-action-on-http-host ] {
       set c [ split [lindex $ptracte 0] \; ]
-      set cmd "if { [HTTP::host] [lindex $c 1] \"[lindex $c 2]\" } { set action [lindex $ptracte 1] }"
+      set a [ lindex $ptracte 1 ]
+      set cmd "if { [HTTP::host] [lindex $c 1] \"[lindex $c 2]\" } { set action $a }"
       catch { eval $cmd }
     }
     unset -nocomplain c cmd ptracte ptraction
